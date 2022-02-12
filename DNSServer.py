@@ -60,7 +60,7 @@ def dns_response(data):
 	# Watch for beginning and end of files being sent
 	if "11111" in str(request.q.qname):
 		filename = str(request.q.qname).split(".")[0].split("11111")[1].replace("-", ".")
-		print("Detected file: %s" % filename)
+		print("[+] Detected file: %s\n" % filename)
 		print(request.q.qname)
 		logging.info(request.q.qname)
 	elif "000000000000000" in str(request.q.qname):
@@ -77,9 +77,13 @@ def dns_response(data):
 			print("----------------------------------------------")
 		except Exception as e:
 			print("\n[-] Error writing file: %s" % str(e))
-	else:
+	elif "test.local" in str(request.q.qname):
+		# Only log requests for the domain our files will be using
 		print(request.q.qname)
 		logging.info(request.q.qname)
+	else:
+		print(request.q.qname)
+		#logging.info(request.q.qname)
 
 	reply = DNSRecord(DNSHeader(id=request.header.id, qr=1, aa=1, ra=1), q=request.q)
 
