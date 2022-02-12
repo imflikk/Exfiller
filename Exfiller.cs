@@ -27,6 +27,7 @@ namespace Exfiller
 			{
 				var fileContentBytes = File.ReadAllBytes(args[0]);
 				String b64File = Convert.ToBase64String(fileContentBytes);
+				// Convert any equals signs to dashes so they can be included in a URL
 				b64File = b64File.Replace("=", "-");
 
 				//Console.WriteLine("Base64: " + b64File + "\n");
