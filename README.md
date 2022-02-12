@@ -30,8 +30,16 @@ The Python server currently detects the beginning and end of the file, extracts 
 
 It is **NOT** stealthy at all at the moment, as seen above where 500+ DNS requests are sent in a matter of seconds.
 
+# Estimated transfer times
+The times below were seen between two local virtual machines, so real world times across the internet will likely be longer.  Each request is also sending 30 characters at a time, but the times could be shortened with longer requests (up to a maximum of 63 characters).  However, they also get more suspicious the longer they are.
 
-# Manually extract file from Base64 requests
+|File Size|Transfer Time|Total Requests|Delay Added|
+|---|---|---|---|
+|||||
+|10 MB| 486 seconds (8 mins, 6 secs)|486000|0 ms|
+|10 MB||486000|20 ms|
+
+# Manually extract files from Base64 requests
 ```bash
 cat dns.log | grep -v "11111" | awk -F":" '{print$3}' | awk -F "." '{print$1}' | sed -z 's/\n//g' | sed -z 's/-/=/g' | base64 -d > NAME_OF_FILE.docx
 ```
