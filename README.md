@@ -5,6 +5,8 @@ The Python DNS Server is intended to be run on an external server and logs reque
 
 ![image](https://user-images.githubusercontent.com/58894272/153721807-cd789163-b65f-4073-a363-829dbcdc14e4.png)
 
+It is **NOT** stealthy at all at the moment, as seen above where 500+ DNS requests are sent in a matter of seconds.
+
 
 # Extract file from Base64 requests
 ```bash
