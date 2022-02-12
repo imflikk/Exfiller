@@ -1,9 +1,27 @@
+# Usage
+
+```bash
+Exfiller.exe --help
+
+  -f, --file          Required. Target file to send.
+
+  -s, --dns-server    Required. Target DNS Server.
+
+  -p, --dns-port      Target DNS Port (Defaults to 53).
+
+  -d, --delay         Delay (in milliseconds) between each request.
+
+  --help              Display this help screen.
+
+  --version           Display version information.
+```
+
 # Exfiller
 C# tool that can exfiltrate files to an external server using DNS requests as this port is often often allowed when a firewall blocks other outbound services.
 
-The Python DNS Server is intended to be run on an external server and logs requests to a file named dns.log.
+The Python DNS Server is intended to be run on an external server and logs requests to a file named dns.log, but only if they include the domain being used in Exfiller.cs as the target domain to send the file to.
 
-![image](https://user-images.githubusercontent.com/58894272/153721807-cd789163-b65f-4073-a363-829dbcdc14e4.png)
+![image](https://user-images.githubusercontent.com/58894272/153729622-13e636af-b503-4c00-a8ff-e38fee457bff.png)
 
 The Python server currently detects the beginning and end of the file, extracts and writes the file to disk, then clears the log and waits for more files.
 
@@ -24,4 +42,3 @@ cat dns.log | grep -v "11111" | awk -F":" '{print$3}' | awk -F "." '{print$1}' |
 # TO-DO
 - Add other methods for exfiltration
   - HTTP/HTTPS over GET/POST requests
-- Make it more stealthy with delays between requests
