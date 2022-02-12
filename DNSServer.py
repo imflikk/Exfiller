@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+# Mostly borrowed from: https://gist.github.com/pklaus/b5a7876d4d2cf7271873
+
 import argparse
 import datetime
 import sys
