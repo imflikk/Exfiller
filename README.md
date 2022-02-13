@@ -1,5 +1,5 @@
 # Exfiller
-C# tool that can exfiltrate files to an external server using DNS requests as this port is often often allowed when a firewall blocks other outbound services.
+C#/PowerShell tool that can exfiltrate files to an external server using DNS requests as this port is often often allowed when a firewall blocks other outbound services.
 
 The Python DNS Server is intended to be run on an external server and logs requests to a file named dns.log, but only if they include the domain being used in Exfiller.cs as the target domain to send the file to.
 
@@ -12,9 +12,10 @@ The Python server currently detects the beginning and end of the file, extracts 
 
 It is **NOT** stealthy at all at the moment, as seen above where 500+ DNS requests are sent in a matter of seconds.
 
-**NOTE**: Currently needs to be built in .NET Core as a standalone app in a single file or there will be dependency errors due to the NuGet packages used for command-line arguments and DNS clients.  This unfortunately results in a 30mb file, but I'm not sure of a way around this as the built-in DNS queries for .NET don't allow specifying a DNS server other than the system defaults.
+**NOTE**: The C# version currently needs to be built in .NET Core as a standalone app in a single file or there will be dependency errors due to the NuGet packages used for command-line arguments and DNS clients.  This unfortunately results in a 30mb file, but I'm not sure of a way around this as the built-in DNS queries for .NET don't allow specifying a DNS server other than the system defaults.
 
 # Usage
+The PowerShell version does not currently support using a different port and defaults to UDP 53.
 
 ```bash
 Exfiller.exe --help
@@ -47,7 +48,7 @@ The times below were seen between two local virtual machines, so real world time
 
 # Manually extract files from Base64 requests
 ```bash
-cat dns.log | grep -v "11111" | awk -F":" '{print$3}' | awk -F "." '{print$1}' | sed -z 's/\n//g' | sed -z 's/-/=/g' | base64 -d > NAME_OF_FILE.docx
+cat dns.log | grep -v '11111' | awk -F':' '{{print$3}}' | awk -F '.' '{{print$1}}' | sed -z 's/\\n//g' | sed -z 's/-00-/+/g' | sed -z 's/-0-/\\//g' | sed -z 's/-/=/g' | base64 -d > files/NAME_OF_FILE.docx
 ```
 
 ![image](https://user-images.githubusercontent.com/58894272/153721860-f71d8d32-66df-4143-9db8-ef32d99323de.png)
@@ -56,7 +57,7 @@ cat dns.log | grep -v "11111" | awk -F":" '{print$3}' | awk -F "." '{print$1}' |
 # TO-DO
 - Add other methods for exfiltration
   - HTTP/HTTPS over GET/POST requests
-  - PowerShell alternative to avoid large file size
+- (**DONE**) PowerShell alternative to avoid large file size
 
 
 
