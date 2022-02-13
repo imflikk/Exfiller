@@ -15,6 +15,8 @@ It is **NOT** stealthy at all at the moment, as seen above where 500+ DNS reques
 **NOTE**: The C# version currently needs to be built in .NET Core as a standalone app in a single file or there will be dependency errors due to the NuGet packages used for command-line arguments and DNS clients.  This unfortunately results in a 30mb file, but I'm not sure of a way around this as the built-in DNS queries for .NET don't allow specifying a DNS server other than the system defaults.
 
 # Usage
+
+### Exfiller (C#/PowerShell)
 The PowerShell version does not currently support using a different port and defaults to UDP 53.
 
 ```bash
@@ -35,9 +37,27 @@ Exfiller.exe --help
   --version               Display version information.
 ```
 
+### DNSServer.py
+The Python script should be run on the external server, but should not require any additional libraries other than those installed by default.
+
+```bash
+python3 dnsserver.py --udp --port 53                                                                                                                                             
+
+[*] Starting nameserver...
+
+[*] UDP server loop running in thread: Thread-1
+
+[*] Clearing log to prepare for new files...
+
+----------------------------------------------
+
+[*] Log cleared and waiting for new files...
+----------------------------------------------
+```
+
 
 # Estimated transfer times
-The times below were seen between two local virtual machines, so real world times across the internet will likely be longer.  Each request is also sending 30 characters at a time, but the times could be shortened with longer requests (up to a maximum of 63 characters).  However, they also get more suspicious the longer they are.
+The times below were for the C# version (PowerShell is slightly slower) and seen between two local virtual machines, so real world times across the internet will likely be longer.  Each request is also sending 30 characters at a time, but the times could be shortened with longer requests (up to a maximum of 63 characters).  However, they also get more suspicious the longer they are.
 
 |File Size|Transfer Time|Total Requests|Delay Added|
 |---|---|---|---|
