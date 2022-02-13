@@ -56,6 +56,7 @@ cat dns.log | grep -v "11111" | awk -F":" '{print$3}' | awk -F "." '{print$1}' |
 # TO-DO
 - Add other methods for exfiltration
   - HTTP/HTTPS over GET/POST requests
+  - PowerShell alternative to avoid large file size
 
 
 
