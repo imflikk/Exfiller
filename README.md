@@ -3,17 +3,19 @@
 ```bash
 Exfiller.exe --help
 
-  -f, --file          Required. Target file to send.
+  -f, --file              Required. Target file to send.
 
-  -s, --dns-server    Required. Target DNS Server.
+  -s, --dns-server        Required. Target DNS Server.
 
-  -p, --dns-port      Target DNS Port (Defaults to 53).
+  -p, --dns-port          (Default: 53) Target DNS Port (Defaults to 53).
 
-  -d, --delay         Delay (in milliseconds) between each request.
+  -d, --delay             (Default: 0) Delay (in milliseconds) between each request.
 
-  --help              Display this help screen.
+  -l, --request-length    (Default: 30) Length of the string to send in each request (Defaults to 30).
 
-  --version           Display version information.
+  --help                  Display this help screen.
+
+  --version               Display version information.
 ```
 
 # Exfiller
@@ -38,7 +40,7 @@ The times below were seen between two local virtual machines, so real world time
 |1 MB|49 seconds|46000|0 ms|
 |1 MB|1451 seconds (24 minutes, 11 seconds)|46000|20 ms|
 |10 MB|486 seconds (8 mins, 6 secs)|486000|0 ms|
-|10 MB||486000|20 ms|
+|10 MB|Around 4 hours? (haven't tested yet)|486000|20 ms|
 
 # Manually extract files from Base64 requests
 ```bash
