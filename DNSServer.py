@@ -10,6 +10,7 @@ import socketserver
 import struct
 import logging
 import subprocess
+import os
 
 logging.basicConfig(filename='dns.log', encoding='utf-8', level=logging.INFO)
 
@@ -60,6 +61,8 @@ def dns_response(data):
 	# Watch for beginning and end of files being sent
 	if "11111" in str(request.q.qname):
 		filename = str(request.q.qname).split(".")[0].split("11111")[1].replace("-", ".")
+		if filename[0] == ".":
+			filename = filename[1:]
 		print("[+] Detected file: %s\n" % filename)
 		print(request.q.qname)
 		logging.info(request.q.qname)
@@ -68,7 +71,9 @@ def dns_response(data):
 		print(f"\n[+] Extracting and writing {filename} to disk...")
 
 		try:
-			subprocess.run(f"cat dns.log | grep -v '11111' | awk -F':' '{{print$3}}' | awk -F '.' '{{print$1}}' | sed -z 's/\\n//g' | sed -z 's/-/=/g' | base64 -d > {filename}", shell=True,  check=True)
+			if not os.path.exists(os.getcwd()+"/files"):
+				os.makedirs(os.getcwd()+"/files")
+			subprocess.run(f"cat dns.log | grep -v '11111' | awk -F':' '{{print$3}}' | awk -F '.' '{{print$1}}' | sed -z 's/\\n//g' | sed -z 's/-00-/+/g' | sed -z 's/-0-/\\//g' | sed -z 's/-/=/g' | base64 -d > files/{filename}", shell=True,  check=True)
 			print("\n[+] Successfully wrote file!")
 			print("\n[*] Clearing log to prepare for new files...")
 			open("dns.log", 'w').close()
@@ -166,7 +171,7 @@ def main():
 	args = parser.parse_args()
 	if not (args.udp or args.tcp): parser.error("Please select at least one of --udp or --tcp.")
 
-	print("Starting nameserver...")
+	print("\n[*] Starting nameserver...")
 
 	servers = []
 	if args.udp: servers.append(socketserver.ThreadingUDPServer(('', args.port), UDPRequestHandler))
@@ -176,7 +181,13 @@ def main():
 		thread = threading.Thread(target=s.serve_forever)  # that thread will start one more thread for each request
 		thread.daemon = True  # exit the server thread when the main thread terminates
 		thread.start()
-		print("%s server loop running in thread: %s" % (s.RequestHandlerClass.__name__[:3], thread.name))
+		print("\n[*] %s server loop running in thread: %s" % (s.RequestHandlerClass.__name__[:3], thread.name))
+
+	print("\n[*] Clearing log to prepare for new files...")
+	open("dns.log", 'w').close()
+	print("\n----------------------------------------------")
+	print("\n[*] Log cleared and waiting for new files...")
+	print("----------------------------------------------")
 
 	try:
 		while 1:
