@@ -35,8 +35,9 @@ The times below were seen between two local virtual machines, so real world time
 
 |File Size|Transfer Time|Total Requests|Delay Added|
 |---|---|---|---|
-|||||
-|10 MB| 486 seconds (8 mins, 6 secs)|486000|0 ms|
+|1 MB|49 seconds|46000|0 ms|
+|1 MB|1451 seconds (24 minutes, 11 seconds)|46000|20 ms|
+|10 MB|486 seconds (8 mins, 6 secs)|486000|0 ms|
 |10 MB||486000|20 ms|
 
 # Manually extract files from Base64 requests
@@ -50,3 +51,8 @@ cat dns.log | grep -v "11111" | awk -F":" '{print$3}' | awk -F "." '{print$1}' |
 # TO-DO
 - Add other methods for exfiltration
   - HTTP/HTTPS over GET/POST requests
+
+
+
+# Advisory
+This tool should be used for authorized penetration testing and/or educational purposes only. Any misuse of this software will not be the responsibility of the author or of any other collaborator. Use it at your own machines and/or with the owner's permission.
