@@ -48,7 +48,7 @@ namespace Exfiller
 			{
 				if (opts.Length > 63)
 				{
-					Console.WriteLine("Invalid request length.  Please choose a value of 63 or lower.");
+					Console.WriteLine("\n[-] Invalid request length.  Please choose a value of 63 or lower.");
 					System.Environment.Exit(1);
 				}
 			}
