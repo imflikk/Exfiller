@@ -1,3 +1,17 @@
+# Exfiller
+C# tool that can exfiltrate files to an external server using DNS requests as this port is often often allowed when a firewall blocks other outbound services.
+
+The Python DNS Server is intended to be run on an external server and logs requests to a file named dns.log, but only if they include the domain being used in Exfiller.cs as the target domain to send the file to.
+
+![image](https://user-images.githubusercontent.com/58894272/153729622-13e636af-b503-4c00-a8ff-e38fee457bff.png)
+
+The Python server currently detects the beginning and end of the file, extracts and writes the file to disk, then clears the log and waits for more files.
+
+![image](https://user-images.githubusercontent.com/58894272/153723639-d9e6405e-4ed9-4d52-8b1e-448ffadbdc43.png)
+
+
+It is **NOT** stealthy at all at the moment, as seen above where 500+ DNS requests are sent in a matter of seconds.
+
 # Usage
 
 ```bash
@@ -18,19 +32,6 @@ Exfiller.exe --help
   --version               Display version information.
 ```
 
-# Exfiller
-C# tool that can exfiltrate files to an external server using DNS requests as this port is often often allowed when a firewall blocks other outbound services.
-
-The Python DNS Server is intended to be run on an external server and logs requests to a file named dns.log, but only if they include the domain being used in Exfiller.cs as the target domain to send the file to.
-
-![image](https://user-images.githubusercontent.com/58894272/153729622-13e636af-b503-4c00-a8ff-e38fee457bff.png)
-
-The Python server currently detects the beginning and end of the file, extracts and writes the file to disk, then clears the log and waits for more files.
-
-![image](https://user-images.githubusercontent.com/58894272/153723639-d9e6405e-4ed9-4d52-8b1e-448ffadbdc43.png)
-
-
-It is **NOT** stealthy at all at the moment, as seen above where 500+ DNS requests are sent in a matter of seconds.
 
 # Estimated transfer times
 The times below were seen between two local virtual machines, so real world times across the internet will likely be longer.  Each request is also sending 30 characters at a time, but the times could be shortened with longer requests (up to a maximum of 63 characters).  However, they also get more suspicious the longer they are.
