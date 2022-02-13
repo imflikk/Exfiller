@@ -47,6 +47,8 @@ The times below were seen between two local virtual machines, so real world time
 |10 MB|Around 4 hours? (haven't tested yet)|486000|20 ms|
 
 # Manually extract files from Base64 requests
+The Python server automatically extracts files and clears the log after the ending identifier is seen, but if for some reason this doesn't happen and you want to manually extract the file from an existing log the command below can be used.
+
 ```bash
 cat dns.log | grep -v '11111' | awk -F':' '{{print$3}}' | awk -F '.' '{{print$1}}' | sed -z 's/\\n//g' | sed -z 's/-00-/+/g' | sed -z 's/-0-/\\//g' | sed -z 's/-/=/g' | base64 -d > files/NAME_OF_FILE.docx
 ```
