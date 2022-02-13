@@ -12,6 +12,8 @@ The Python server currently detects the beginning and end of the file, extracts 
 
 It is **NOT** stealthy at all at the moment, as seen above where 500+ DNS requests are sent in a matter of seconds.
 
+**NOTE**: Currently needs to be built in .NET Core as a standalone app in a single file or there will be dependency errors due to the NuGet packages used for command-line arguments and DNS clients.  This unfortunately results in a 30mb file, but I'm not sure of a way around this as the built-in DNS queries for .NET don't allow specifying a DNS server other than the system defaults.
+
 # Usage
 
 ```bash
