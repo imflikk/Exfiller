@@ -80,6 +80,7 @@ cat dns.log | grep -v '11111' | awk -F':' '{{print$3}}' | awk -F '.' '{{print$1}
 - Add other methods for exfiltration
   - HTTP/HTTPS over GET/POST requests
 - (**DONE**) PowerShell alternative to avoid large file size
+- Nim version for a smaller, portable binary (and for Nim practice)
 
 
 
