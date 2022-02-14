@@ -3,6 +3,8 @@ C#/PowerShell tool that can exfiltrate files to an external server using DNS req
 
 The Python DNS Server is intended to be run on an external server and logs requests to a file named dns.log, but only if they include the domain being used in Exfiller.cs as the target domain to send the file to.
 
+**Edit**: Added a Nim version as well mainly to practice using Nim, but also because the binary is much smaller than the standalone C# one while still being self-contained.
+
 ![image](https://user-images.githubusercontent.com/58894272/153729622-13e636af-b503-4c00-a8ff-e38fee457bff.png)
 
 The Python server currently detects the beginning and end of the file, extracts and writes the file to disk, then clears the log and waits for more files.
